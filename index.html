@@ -139,6 +139,13 @@
             flex-shrink: 0;
         }
         
+        .recipe-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 15px 15px 0 0;
+        }
+        
         .recipe-info {
             flex: 1;
         }
@@ -564,6 +571,7 @@
                 id: "meal-001",
                 name: "Garlic Butter Chicken Tenderloins with Roasted Veggies",
                 emoji: "🍗",
+                image: "images/chicken.png",
                 protein: "Fresh Family Pack Chicken Tenderloins",
                 vegetable: "Roasted Asparagus & Zucchini",
                 carb: "Garlic Parmesan Quinoa",
@@ -588,6 +596,7 @@
                 id: "meal-002",
                 name: "Pan-Seared Ribeye Steaks with Sweet Potato Mash",
                 emoji: "🥩",
+                image: "images/ribeye.png",
                 protein: "USDA Choice Bone-In Ribeye Roast",
                 vegetable: "Sautéed Spinach with Garlic",
                 carb: "Maple Sweet Potato Mash",
@@ -611,6 +620,7 @@
                 id: "meal-003",
                 name: "Slow Cooker Pulled Pork with Slaw",
                 emoji: "🐷",
+                image: "images/pork.png",
                 protein: "Smithfield Whole Boston Butt Pork Roast",
                 vegetable: "Apple Cabbage Slaw",
                 carb: "Whole Grain Slider Buns",
@@ -635,6 +645,7 @@
                 id: "meal-004",
                 name: "Parmesan Crusted Flounder with Lemon Broccoli",
                 emoji: "🐟",
+                image: "images/flounder.png",
                 protein: "Fremont Fish Market Parmesan Crusted Flounder",
                 vegetable: "Lemon Garlic Broccoli",
                 carb: "Wild Rice Pilaf",
@@ -657,6 +668,7 @@
                 id: "meal-005",
                 name: "Lean Beef Taco Bowls",
                 emoji: "🌮",
+                image: "images/taco.png",
                 protein: "HT Rancher 93% Lean Ground Beef",
                 vegetable: "Sautéed Peppers & Black Beans",
                 carb: "Cilantro Lime Brown Rice",
@@ -681,6 +693,7 @@
                 id: "meal-006",
                 name: "Argentine Shrimp Stir-Fry",
                 emoji: "🦐",
+                image: "images/shrimp.png",
                 protein: "Argentine Shrimp 16-20 ct",
                 vegetable: "Sugar Snap Peas & Bell Peppers",
                 carb: "Jasmine Rice",
@@ -749,6 +762,7 @@
             const grid = document.getElementById('recipes-grid');
             grid.innerHTML = meals.map(meal => `
                 <div class="recipe-card">
+                    <img src="${meal.image}" alt="${meal.name}" class="recipe-image" onerror="this.style.display='none'">
                     <div class="recipe-header" onclick="toggleRecipe('${meal.id}')">
                         <div class="recipe-emoji">${meal.emoji}</div>
                         <div class="recipe-info">
