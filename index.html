@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍽️ Jmo Family Weekly Recipes</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍽️</text></svg>">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #e67e22;
+            --primary-dark: #d35400;
+            --secondary: #27ae60;
+            --bg: #1a1a2e;
+            --card: #2d3436;
+            --text: #ffffff;
+            --text-muted: #888;
+            --border: #3d3d5c;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--bg) 0%, #16213e 100%);
+            min-height: 100vh;
+            color: var(--text);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Header */
+        header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .week-badge {
+            display: inline-block;
+            background: var(--card);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.95em;
+            border: 1px solid var(--border);
+        }
+        
+        .theme-banner {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 12px 20px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-weight: 600;
+        }
+        
+        /* Navigation Tabs */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .tab {
+            background: var(--card);
+            border: 2px solid var(--border);
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9em;
+        }
+        
+        .tab:hover {
+            background: var(--border);
+        }
+        
+        .tab.active {
+            border-color: var(--primary);
+            background: rgba(230, 126, 34, 0.2);
+        }
+        
+        /* Sections */
+        .section {
+            display: none;
+        }
+        
+        .section.active {
+            display: block;
+        }
+        
+        /* Recipe Cards */
+        .recipes-grid {
+            display: grid;
+            gap: 20px;
+        }
+        
+        .recipe-card {
+            background: var(--card);
+            border-radius: 15px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: transform 0.2s;
+        }
+        
+        .recipe-card:hover {
+            transform: translateY(-3px);
+        }
+        
+        .recipe-header {
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .recipe-emoji {
+            font-size: 40px;
+            flex-shrink: 0;
+        }
+        
+        .recipe-info {
+            flex: 1;
+        }
+        
+        .recipe-name {
+            font-size: 1.15em;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .recipe-meta {
+            display: flex;
+            gap: 15px;
+            font-size: 0.85em;
+            color: var(--text-muted);
+            flex-wrap: wrap;
+        }
+        
+        .recipe-meta span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .recipe-deal {
+            background: rgba(231, 76, 60, 0.2);
+            color: #e74c3c;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+        
+        .recipe-body {
+            display: none;
+            padding: 0 20px 20px;
+            border-top: 1px solid var(--border);
+        }
+        
+        .recipe-body.open {
+            display: block;
+        }
+        
+        .recipe-section {
+            margin-top: 15px;
+        }
+        
+        .recipe-section h4 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 0.95em;
+        }
+        
+        .ingredients-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 8px;
+        }
+        
+        .ingredient {
+            background: var(--bg);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 0.9em;
+        }
+        
+        .instructions {
+            background: var(--bg);
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 0.95em;
+            line-height: 1.7;
+        }
+        
+        /* Shopping List */
+        .store-section {
+            background: var(--card);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+        }
+        
+        .store-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+        
+        .shopping-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: var(--bg);
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        
+        .shopping-item input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .shopping-item.checked {
+            opacity: 0.5;
+            text-decoration: line-through;
+        }
+        
+        /* Deals */
+        .deal-card {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.2), rgba(230, 126, 34, 0.2));
+            border: 1px solid #e74c3c;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+        }
+        
+        .deal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .deal-item {
+            font-weight: 600;
+            font-size: 1.05em;
+        }
+        
+        .deal-store {
+            background: var(--card);
+            padding: 4px 10px;
+            border-radius: 10px;
+            font-size: 0.8em;
+        }
+        
+        .deal-prices {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        .deal-sale {
+            color: var(--secondary);
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        
+        .deal-regular {
+            color: var(--text-muted);
+            text-decoration: line-through;
+            font-size: 0.9em;
+        }
+        
+        .deal-notes {
+            font-size: 0.85em;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+        
+        /* Chat */
+        .chat-container {
+            background: var(--card);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid var(--border);
+        }
+        
+        .chat-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .chat-header h3 {
+            flex: 1;
+        }
+        
+        .online-badge {
+            background: var(--secondary);
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .chat-info {
+            background: var(--bg);
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            font-size: 0.9em;
+            color: var(--text-muted);
+        }
+        
+        .chat-input-area {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .chat-input {
+            flex: 1;
+            background: var(--bg);
+            border: 2px solid var(--border);
+            border-radius: 25px;
+            padding: 12px 20px;
+            color: var(--text);
+            font-size: 1em;
+            outline: none;
+        }
+        
+        .chat-input:focus {
+            border-color: var(--primary);
+        }
+        
+        .chat-send {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        .chat-send:hover {
+            transform: scale(1.05);
+        }
+        
+        .chat-send:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .chat-status {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.85em;
+            color: var(--secondary);
+            display: none;
+        }
+        
+        .chat-status.show {
+            display: block;
+        }
+        
+        /* Budget Summary */
+        .budget-card {
+            background: linear-gradient(135deg, rgba(46, 204, 113, 0.2), rgba(39, 174, 96, 0.2));
+            border: 1px solid var(--secondary);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .budget-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            text-align: center;
+        }
+        
+        .budget-item {
+            background: var(--card);
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .budget-label {
+            font-size: 0.8em;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+        }
+        
+        .budget-value {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: var(--secondary);
+        }
+        
+        /* Prep Tips */
+        .tips-list {
+            background: var(--card);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid var(--border);
+        }
+        
+        .tip-item {
+            padding: 12px;
+            background: var(--bg);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            font-size: 0.95em;
+        }
+        
+        .tip-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 30px 0;
+            margin-top: 40px;
+            border-top: 1px solid var(--border);
+            color: var(--text-muted);
+            font-size: 0.85em;
+        }
+        
+        /* Responsive */
+        @media (max-width: 600px) {
+            h1 { font-size: 1.6em; }
+            .budget-grid { grid-template-columns: 1fr; }
+            .recipe-header { flex-direction: column; text-align: center; }
+            .tabs { gap: 5px; }
+            .tab { padding: 8px 15px; font-size: 0.85em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🍽️ Jmo Family Recipes</h1>
+            <div class="week-badge">📅 Week of March 25, 2026</div>
+            <div class="theme-banner">🐷 Spring Protein Savings - Pork & Shrimp at incredible prices!</div>
+        </header>
+        
+        <div class="tabs">
+            <div class="tab active" onclick="showSection('recipes')">🍳 Recipes</div>
+            <div class="tab" onclick="showSection('shopping')">🛒 Shopping</div>
+            <div class="tab" onclick="showSection('deals')">🔥 Deals</div>
+            <div class="tab" onclick="showSection('tips')">💡 Prep Tips</div>
+            <div class="tab" onclick="showSection('chat')">💬 Ask Anton</div>
+        </div>
+        
+        <!-- Recipes Section -->
+        <div id="recipes" class="section active">
+            <div class="recipes-grid" id="recipes-grid">
+                <!-- Recipes loaded via JS -->
+            </div>
+        </div>
+        
+        <!-- Shopping Section -->
+        <div id="shopping" class="section">
+            <div class="budget-card">
+                <h3 style="margin-bottom: 15px;">💰 Weekly Budget</h3>
+                <div class="budget-grid">
+                    <div class="budget-item">
+                        <div class="budget-label">Total Est.</div>
+                        <div class="budget-value">$90.50</div>
+                    </div>
+                    <div class="budget-item">
+                        <div class="budget-label">Per Meal</div>
+                        <div class="budget-value">$15.08</div>
+                    </div>
+                    <div class="budget-item">
+                        <div class="budget-label">Per Serving</div>
+                        <div class="budget-value">$3.02</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="shopping-lists">
+                <!-- Shopping lists loaded via JS -->
+            </div>
+        </div>
+        
+        <!-- Deals Section -->
+        <div id="deals" class="section">
+            <div id="deals-list">
+                <!-- Deals loaded via JS -->
+            </div>
+        </div>
+        
+        <!-- Tips Section -->
+        <div id="tips" class="section">
+            <div class="tips-list" id="tips-list">
+                <!-- Tips loaded via JS -->
+            </div>
+        </div>
+        
+        <!-- Chat Section -->
+        <div id="chat" class="section">
+            <div class="chat-container">
+                <div class="chat-header">
+                    <div class="online-badge"></div>
+                    <h3>Chat with Anton</h3>
+                </div>
+                <div class="chat-info">
+                    Ask me anything about this week's recipes, substitutions, cooking tips, or meal prep questions! I'll respond in Discord and can help you out. 🍳
+                </div>
+                <div class="chat-input-area">
+                    <input type="text" class="chat-input" id="chat-input" placeholder="Ask about recipes, substitutions, cooking tips..." onkeypress="handleKeyPress(event)">
+                    <button class="chat-send" id="chat-send" onclick="sendMessage()">Send 📤</button>
+                </div>
+                <div class="chat-status" id="chat-status">✅ Message sent! I'll respond shortly.</div>
+            </div>
+        </div>
+        
+        <footer>
+            Made with ❤️ by Son of Anton • Updated March 22, 2026
+        </footer>
+    </div>
+
+    <script>
+        // Meal data
+        const meals = [
+            {
+                id: "meal-001",
+                name: "Garlic Butter Chicken Tenderloins with Roasted Veggies",
+                emoji: "🍗",
+                protein: "Fresh Family Pack Chicken Tenderloins",
+                vegetable: "Roasted Asparagus & Zucchini",
+                carb: "Garlic Parmesan Quinoa",
+                prepTime: 25,
+                servings: 5,
+                cost: "$11.00",
+                store: "Aldi",
+                deal: "🔥 Save $2/lb!",
+                ingredients: [
+                    "2 lbs Chicken Tenderloins",
+                    "1.5 lbs Asparagus",
+                    "2 medium Zucchini",
+                    "2 cups Quinoa",
+                    "4 tbsp Butter",
+                    "6 cloves Garlic",
+                    "½ cup Parmesan",
+                    "2 tbsp Italian Seasoning"
+                ],
+                instructions: "Cook quinoa (15 min), stir in parmesan. Toss asparagus and zucchini with olive oil, roast at 425°F 15 min. Season chicken with Italian seasoning. Pan-sear in butter with garlic 4-5 min per side until golden and cooked through. Rest 3 min, slice. Plate with quinoa and roasted veggies."
+            },
+            {
+                id: "meal-002",
+                name: "Pan-Seared Ribeye Steaks with Sweet Potato Mash",
+                emoji: "🥩",
+                protein: "USDA Choice Bone-In Ribeye Roast",
+                vegetable: "Sautéed Spinach with Garlic",
+                carb: "Maple Sweet Potato Mash",
+                prepTime: 28,
+                servings: 5,
+                cost: "$24.00",
+                store: "Aldi",
+                deal: "🔥 Save $6/lb!",
+                ingredients: [
+                    "2.5 lbs Bone-In Ribeye (cut into steaks)",
+                    "2.5 lbs Sweet Potatoes",
+                    "10 oz Fresh Spinach",
+                    "4 tbsp Butter",
+                    "2 tbsp Maple Syrup",
+                    "4 cloves Garlic",
+                    "2 sprigs Fresh Rosemary"
+                ],
+                instructions: "Cube and boil sweet potatoes 15 min until tender, mash with butter and maple syrup. Pat steaks dry, season generously with salt and pepper. Sear in cast iron 4 min per side for medium-rare (add 1-2 min for medium). Rest 5 min. Sauté spinach with garlic 2-3 min until wilted. Slice steak against grain."
+            },
+            {
+                id: "meal-003",
+                name: "Slow Cooker Pulled Pork with Slaw",
+                emoji: "🐷",
+                protein: "Smithfield Whole Boston Butt Pork Roast",
+                vegetable: "Apple Cabbage Slaw",
+                carb: "Whole Grain Slider Buns",
+                prepTime: 15,
+                servings: 5,
+                cost: "$9.00",
+                store: "Harris Teeter",
+                deal: "🔥 50% OFF!",
+                ingredients: [
+                    "3 lbs Boston Butt Pork Roast",
+                    "½ head Green Cabbage (shredded)",
+                    "1 large Apple",
+                    "¼ cup Apple Cider Vinegar",
+                    "2 tbsp Brown Sugar",
+                    "10 Whole Grain Slider Buns",
+                    "½ cup BBQ Sauce (low sugar)",
+                    "2 tbsp Smoked Paprika"
+                ],
+                instructions: "Rub pork with paprika, salt, pepper. Place in slow cooker with ½ cup water. Cook on HIGH 6-7 hrs (or LOW 10 hrs). Shred with forks, mix with BBQ sauce. Meanwhile, make slaw: toss shredded cabbage and julienned apple with vinegar and brown sugar. Serve pork on buns topped with slaw."
+            },
+            {
+                id: "meal-004",
+                name: "Parmesan Crusted Flounder with Lemon Broccoli",
+                emoji: "🐟",
+                protein: "Fremont Fish Market Parmesan Crusted Flounder",
+                vegetable: "Lemon Garlic Broccoli",
+                carb: "Wild Rice Pilaf",
+                prepTime: 22,
+                servings: 5,
+                cost: "$16.00",
+                store: "Aldi",
+                deal: "Save $2",
+                ingredients: [
+                    "2 packages Parmesan Crusted Flounder (frozen)",
+                    "2 lbs Broccoli Crowns",
+                    "2 cups Wild Rice Blend",
+                    "2 whole Lemons",
+                    "4 cloves Garlic",
+                    "3 tbsp Olive Oil"
+                ],
+                instructions: "Cook wild rice per package (20 min). Bake flounder at 425°F for 18-20 min until golden and flaky. Toss broccoli florets with olive oil, minced garlic, salt, pepper. Roast alongside fish 15 min. Squeeze fresh lemon over broccoli before serving."
+            },
+            {
+                id: "meal-005",
+                name: "Lean Beef Taco Bowls",
+                emoji: "🌮",
+                protein: "HT Rancher 93% Lean Ground Beef",
+                vegetable: "Sautéed Peppers & Black Beans",
+                carb: "Cilantro Lime Brown Rice",
+                prepTime: 20,
+                servings: 5,
+                cost: "$12.50",
+                store: "Harris Teeter",
+                deal: "Save $2/lb!",
+                ingredients: [
+                    "2 lbs 93% Lean Ground Beef",
+                    "3 large Bell Peppers (mixed colors)",
+                    "2 cans Black Beans",
+                    "2 cups Brown Rice",
+                    "1 bunch Fresh Cilantro",
+                    "2 whole Limes",
+                    "2 tbsp Taco Seasoning (low sodium)",
+                    "1 cup Fresh Salsa"
+                ],
+                instructions: "Cook brown rice (20 min), stir in lime juice and chopped cilantro. Brown ground beef, drain any fat, add taco seasoning and ¼ cup water. Sauté sliced peppers until tender-crisp. Warm and rinse black beans. Assemble bowls: rice base, seasoned beef, peppers, beans. Top with fresh salsa."
+            },
+            {
+                id: "meal-006",
+                name: "Argentine Shrimp Stir-Fry",
+                emoji: "🦐",
+                protein: "Argentine Shrimp 16-20 ct",
+                vegetable: "Sugar Snap Peas & Bell Peppers",
+                carb: "Jasmine Rice",
+                prepTime: 18,
+                servings: 5,
+                cost: "$18.00",
+                store: "Harris Teeter",
+                deal: "🔥 Save $6/lb!",
+                ingredients: [
+                    "1.5 lbs Argentine Shrimp 16-20 ct",
+                    "1 lb Sugar Snap Peas",
+                    "2 large Bell Peppers (red & yellow)",
+                    "2.5 cups Jasmine Rice",
+                    "2 tbsp Sesame Oil",
+                    "3 tbsp Low-Sodium Soy Sauce",
+                    "1 tbsp Fresh Ginger",
+                    "4 cloves Garlic",
+                    "1 tbsp Honey"
+                ],
+                instructions: "Cook jasmine rice (18 min). Stir-fry snap peas and peppers in sesame oil 3 min, set aside. Add more oil, sauté ginger and garlic 30 sec. Add shrimp, cook 2-3 min per side until pink. Add vegetables back, toss with soy sauce and honey. Serve immediately over rice."
+            }
+        ];
+        
+        const shoppingLists = {
+            harristeeter: [
+                "Boston Butt Pork Roast (3 lb) - $4.47",
+                "93% Lean Ground Beef (2 lb) - $7.98",
+                "Argentine Shrimp (1.5 lb) - $13.49",
+                "Smithfield Bacon - BOGO",
+                "Asparagus (1.5 lb) - $2.99",
+                "Broccoli Crowns (2 lb) - $2.98",
+                "Bell Peppers (3-pack) - $2.99",
+                "Fresh Spinach (10 oz) - $2.99"
+            ],
+            aldi: [
+                "Chicken Tenderloins Family Pack (2 lb) - $4.98",
+                "Bone-In Ribeye Roast (2.5 lb) - $22.48",
+                "Parmesan Crusted Flounder (2 pkg) - $13.98",
+                "Sweet Potatoes (2.5 lb) - $1.73",
+                "Green Cabbage (1 head) - $0.79",
+                "Sugar Snap Peas - $2.29",
+                "Quinoa (12 oz) - $2.99"
+            ]
+        };
+        
+        const deals = [
+            { store: "Aldi", item: "Fresh Family Pack Chicken Tenderloins", sale: "$2.49/lb", regular: "$4.49/lb", notes: "🔥 Best chicken price! Perfect for quick weeknight meals" },
+            { store: "Harris Teeter", item: "Smithfield Whole Boston Butt Pork Roast", sale: "$1.49/lb", regular: "$2.99/lb", notes: "🔥 50% OFF - Incredible value for pulled pork!" },
+            { store: "Aldi", item: "USDA Choice Bone-In Ribeye Roast", sale: "$8.99/lb", regular: "$14.99/lb", notes: "🔥 Save $6/lb! Premium steaks at budget prices" },
+            { store: "Harris Teeter", item: "Argentine Shrimp 16-20 ct", sale: "$8.99/lb", regular: "$14.99/lb", notes: "🔥 Save $6/lb! Wild-caught jumbo shrimp" },
+            { store: "Harris Teeter", item: "HT Rancher 93% Lean Ground Beef", sale: "$3.99/lb", regular: "$5.99/lb", notes: "Save $2/lb with VIC card - lean and healthy" },
+            { store: "Harris Teeter", item: "Smithfield Bacon", sale: "BOGO", regular: "~$6.99", notes: "Stock up opportunity for breakfast!" }
+        ];
+        
+        const tips = [
+            "🐷 Start the pulled pork Sunday morning for easy Monday dinner",
+            "🍚 Batch cook brown rice and quinoa on Sunday for multiple meals",
+            "🧅 Pre-chop all veggies Sunday to speed up weeknight cooking",
+            "🦐 Thaw shrimp overnight in fridge before cooking day",
+            "🥩 Take ribeyes out of fridge 30 min before cooking for even searing",
+            "🥗 Make the cabbage slaw ahead - it keeps 3-4 days refrigerated"
+        ];
+        
+        // Render functions
+        function renderRecipes() {
+            const grid = document.getElementById('recipes-grid');
+            grid.innerHTML = meals.map(meal => `
+                <div class="recipe-card">
+                    <div class="recipe-header" onclick="toggleRecipe('${meal.id}')">
+                        <div class="recipe-emoji">${meal.emoji}</div>
+                        <div class="recipe-info">
+                            <div class="recipe-name">${meal.name}</div>
+                            <div class="recipe-meta">
+                                <span>⏱️ ${meal.prepTime} min</span>
+                                <span>👥 ${meal.servings} servings</span>
+                                <span>💰 ${meal.cost}</span>
+                                <span class="recipe-deal">${meal.deal}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="recipe-body" id="body-${meal.id}">
+                        <div class="recipe-section">
+                            <h4>📦 Ingredients</h4>
+                            <div class="ingredients-list">
+                                ${meal.ingredients.map(ing => `<div class="ingredient">${ing}</div>`).join('')}
+                            </div>
+                        </div>
+                        <div class="recipe-section">
+                            <h4>👨‍🍳 Instructions</h4>
+                            <div class="instructions">${meal.instructions}</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function renderShopping() {
+            const container = document.getElementById('shopping-lists');
+            container.innerHTML = `
+                <div class="store-section">
+                    <div class="store-header">🛒 Harris Teeter</div>
+                    ${shoppingLists.harristeeter.map((item, i) => `
+                        <div class="shopping-item" id="ht-${i}">
+                            <input type="checkbox" onchange="toggleItem('ht-${i}')">
+                            <span>${item}</span>
+                        </div>
+                    `).join('')}
+                </div>
+                <div class="store-section">
+                    <div class="store-header">🏪 Aldi</div>
+                    ${shoppingLists.aldi.map((item, i) => `
+                        <div class="shopping-item" id="aldi-${i}">
+                            <input type="checkbox" onchange="toggleItem('aldi-${i}')">
+                            <span>${item}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        function renderDeals() {
+            const container = document.getElementById('deals-list');
+            container.innerHTML = deals.map(deal => `
+                <div class="deal-card">
+                    <div class="deal-header">
+                        <span class="deal-item">${deal.item}</span>
+                        <span class="deal-store">${deal.store}</span>
+                    </div>
+                    <div class="deal-prices">
+                        <span class="deal-sale">${deal.sale}</span>
+                        <span class="deal-regular">${deal.regular}</span>
+                    </div>
+                    <div class="deal-notes">${deal.notes}</div>
+                </div>
+            `).join('');
+        }
+        
+        function renderTips() {
+            const container = document.getElementById('tips-list');
+            container.innerHTML = tips.map(tip => `
+                <div class="tip-item">${tip}</div>
+            `).join('');
+        }
+        
+        // Interactions
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        function toggleRecipe(id) {
+            const body = document.getElementById('body-' + id);
+            body.classList.toggle('open');
+        }
+        
+        function toggleItem(id) {
+            document.getElementById(id).classList.toggle('checked');
+        }
+        
+        // Chat
+        const WEBHOOK_URL = 'https://discord.com/api/webhooks/1485382702348767412/0_Hyi9sV8WP5Hdlio8gc7C7z9H1SYXtJpaAdTYgmIM-TiG9C2omcQK5oWeMQ9qMCzZ8n';
+        
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') sendMessage();
+        }
+        
+        async function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const btn = document.getElementById('chat-send');
+            const status = document.getElementById('chat-status');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            btn.disabled = true;
+            btn.textContent = 'Sending...';
+            
+            try {
+                await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        content: `**📱 Recipe Site Question:**\n${message}`,
+                        username: 'Recipe Site',
+                        avatar_url: 'https://em-content.zobj.net/source/apple/354/fork-and-knife-with-plate_1f37d-fe0f.png'
+                    })
+                });
+                
+                input.value = '';
+                status.textContent = '✅ Message sent! I\'ll respond shortly.';
+                status.classList.add('show');
+                setTimeout(() => status.classList.remove('show'), 5000);
+            } catch (err) {
+                status.textContent = '❌ Failed to send. Try again.';
+                status.classList.add('show');
+            }
+            
+            btn.disabled = false;
+            btn.textContent = 'Send 📤';
+        }
+        
+        // Initialize
+        renderRecipes();
+        renderShopping();
+        renderDeals();
+        renderTips();
+    </script>
+</body>
+</html>
